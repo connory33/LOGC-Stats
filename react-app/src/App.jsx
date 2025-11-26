@@ -31,7 +31,7 @@ function App() {
 
   const loadExcelJson = async () => {
     try {
-      const response = await fetch('/logc_tracker.json')
+      const response = await fetch(`${import.meta.env.BASE_URL}logc_tracker.json`)
       if (!response.ok) return false
       const json = await response.json()
       if (!json || !Array.isArray(json.sheets) || json.sheets.length === 0) {
