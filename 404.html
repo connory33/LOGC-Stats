@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>LOGC Stats</title>
+    <script>
+      // Simple redirect to index.html for GitHub Pages SPA routing
+      // This handles 404 errors by redirecting to the main app
+      var l = window.location;
+      var basePath = '/LOGC-Stats/';
+      
+      // If we're at the root or a subpath, redirect to index.html
+      // Preserve query string and hash
+      var redirectUrl = l.protocol + '//' + l.host + basePath + 'index.html' + l.search + l.hash;
+      window.location.replace(redirectUrl);
+    </script>
+    <meta http-equiv="refresh" content="0; url=/LOGC-Stats/index.html" />
+  </head>
+  <body>
+    <p>Redirecting to <a href="/LOGC-Stats/index.html">LOGC Stats</a>...</p>
+  </body>
+</html>
