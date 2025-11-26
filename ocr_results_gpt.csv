@@ -1,0 +1,115 @@
+"filename","text"
+"IMG_7241.jpeg","{
+    ""headers"": [
+      ""Member"",
+      ""Guide"",
+      ""Blind"",
+      ""Guns"",
+      ""MallardDrake"",
+      ""MallardHen"",
+      ""Sprig"",
+      ""Widgeon"",
+      ""Teal"",
+      ""Wood"",
+      ""Other"",
+      ""Geese"",
+      ""Pheasant""
+    ],
+    ""rows"": [
+      [""Kevin Harvey"", null, ""4"", null, 4, 6, 4, null, null, null, null, null, null],
+      [""Daniel Davis"", null, ""7"", null, 1, 1, null, 1, null, null, null, null, null],
+      [""JB Ferrarone"", null, null, null, null, null, null, null, null, null, null, null, null],
+      [""Jay Abbe"", null, ""2"", null, 5, 1, null, null, null, null, null, null, null],
+      [""Mike Mountanos"", null, ""6"", null, 3, 5, null, null, null, null, null, null, null],
+      [""Tom Messervy"", null, null, null, null, null, null, null, null, null, null, null, null],
+      [""Bob Lashinski"", null, ""11"", null, null, null, null, null, null, null, null, null, null],
+      [""Pete Sonsini"", null, null, null, null, null, null, null, null, null, null, null, null],
+      [""Buster Posey"", null, null, null, null, null, null, null, null, null, null, null, null],
+      [""Jean Young"", null, null, null, null, null, null, null, null, null, null, null, null],
+      [""Casey Safreno"", null, null, null, null, null, null, null, null, null, null, null, null],
+      [""Hank Wetzel"", null, null, null, null, null, null, null, null, null, null, null, null],
+      [""Gavin Holles"", null, null, null, null, null, null, null, null, null, null, null, null],
+      [""Dave Brett"", null, ""3"", null, 3, null, 1, null, 2, 3, null, null, null]
+    ],
+    ""metadata"": {
+      ""date"": ""November 22"",
+      ""location"": ""Live Oak Gun Club 2025-2026"",
+      ""notes"": ""Waterfowl Record""
+    }
+  }"
+"IMG_7242.jpeg","{
+    ""headers"": [
+        ""Member"",
+        ""Guide"",
+        ""Blind"",
+        ""Guns"",
+        ""MallardDrake"",
+        ""MallardHen"",
+        ""Sprig"",
+        ""Widgeon"",
+        ""Teal"",
+        ""Wood"",
+        ""Other"",
+        ""Geese"",
+        ""Pheasant""
+    ],
+    ""rows"": [
+        [""Kevin Harvey"", null, ""5"", null, 7, 1, 3, 1, 1, 0, 0, 0, 0],
+        [""Daniel Davis"", null, ""4"", 2, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+        [""JB Ferrarone"", null, ""5"", null, 2, 2, 2, 1, 0, 0, 0, 0, 0],
+        [""Jay Abbe"", null, null, null, 40, 2, 2, null, null, null, null, null, null],
+        [""Mike Mountanos"", null, null, null, null, null, null, null, null, null, null, null, null],
+        [""Tom Messervy"", null, null, null, null, null, null, null, null, null, null, null, null],
+        [""Bob Lashinski"", null, null, null, null, null, null, null, null, null, null, null, null],
+        [""Pete Sonsini"", null, null, null, null, null, null, null, null, null, null, null, null],
+        [""Buster Posey"", null, null, null, null, null, null, null, null, null, null, null, null],
+        [""Jean Young"", null, ""3"", 6, 5, 6, null, null, 1, null, null, null, null],
+        [""Casey Safreno"", null, ""1"", 3, null, null, null, null, null, null, null, null, null],
+        [""Hank Wetzel"", null, null, null, null, null, null, null, null, null, null, null, null],
+        [""Gavin Holles"", null, null, null, null, null, null, null, null, null, null, null, null],
+        [""Dave Brett"", null, ""3"", null, null, null, null, null, 2, null, null, null, null]
+    ],
+    ""metadata"": {
+        ""date"": ""November 19"",
+        ""location"": ""Live Oak Gun Club 2025-2026"",
+        ""notes"": ""Waterfowl Record""
+    }
+}"
+"IMG_7243.jpeg","{
+    ""headers"": [
+        ""Member"",
+        ""Guide"",
+        ""Blind"",
+        ""Guns"",
+        ""MallardDrake"",
+        ""MallardHen"",
+        ""Sprig"",
+        ""Widgeon"",
+        ""Teal"",
+        ""Wood"",
+        ""Other"",
+        ""Geese"",
+        ""Pheasant""
+    ],
+    ""rows"": [
+        [""Kevin Harvey"", null, null, null, null, null, null, null, null, null, null, null, null],
+        [""Daniel Davis"", null, null, null, null, null, null, null, null, null, null, null, null],
+        [""JB Ferrarone"", null, null, null, null, null, null, null, null, null, null, null, null],
+        [""Jay Abbe"", null, ""5"", 2, 4, 0, 0, 0, 1, 0, 0, 0, 0],
+        [""Mike Mountanos"", null, null, null, null, null, null, null, null, null, null, null, null],
+        [""Tom Messervy"", null, null, null, null, null, null, null, null, null, null, null, null],
+        [""Bob Lashinski"", null, null, null, null, null, null, null, null, null, null, null, null],
+        [""Pete Sonsini"", null, null, null, null, null, null, null, null, null, null, null, null],
+        [""Buster Posey"", null, null, null, null, null, null, null, null, null, null, null, null],
+        [""Jean Young"", ""Sam"", ""10"", 3, 4, 0, 1, 0, 0, 0, 0, 0, 0],
+        [""Casey Safreno"", null, null, null, null, null, null, null, null, null, null, null, null],
+        [""Hank Wetzel"", null, ""2"", 3, 12, 1, 6, 3, 9, 1, 1, 0, 0],
+        [""Gavin Holles"", null, null, null, null, null, null, null, null, null, null, null, null],
+        [""Dave Brett"", null, null, null, null, null, null, null, null, null, null, null, null]
+    ],
+    ""metadata"": {
+        ""date"": ""November 16"",
+        ""location"": ""Live Oak Gun Club 2025-2026"",
+        ""notes"": ""Waterfowl Record""
+    }
+}"
