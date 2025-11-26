@@ -77,11 +77,15 @@ jobs:
           echo ""
           echo "=== Checking index.html is at root ==="
           test -f ./index.html && echo "✓ index.html is at root of dist/" || echo "✗ index.html NOT at root"
+          echo ""
+          echo "=== Verifying artifact will have correct structure ==="
+          echo "When uploaded, these files should be at root of GitHub Pages:"
+          ls -1 | head -10
           
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
-          path: 'react-app/dist'
+          path: './react-app/dist'
 
   deploy:
     environment:
