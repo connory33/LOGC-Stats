@@ -38,15 +38,39 @@ function App() {
         return false
       }
       // Filter out template sheets (e.g., "sheet3")
+      // Also filter out sheets with "TODO" in the name (incomplete data)
       const filteredSheets = json.sheets.filter(sheet => {
         const nameLower = sheet.name.toLowerCase()
-        return !nameLower.includes('sheet3') && !nameLower.includes('template')
+        return !nameLower.includes('sheet3') && 
+               !nameLower.includes('template') &&
+               !nameLower.includes('todo')
       })
       if (filteredSheets.length === 0) {
         return false
       }
-      setExcelSheets(filteredSheets)
-      setSelectedSheet(filteredSheets[0].name)
+      
+      // Sort sheets by date (most recent first)
+      const sortedSheets = filteredSheets.sort((a, b) => {
+        const parseDate = (dateStr) => {
+          if (dateStr.includes('_')) {
+            const parts = dateStr.split('_')
+            if (parts.length === 3) {
+              const month = parseInt(parts[0], 10) - 1
+              const day = parseInt(parts[1], 10)
+              let year = parseInt(parts[2], 10)
+              if (year < 100) year += 2000
+              return new Date(year, month, day).getTime()
+            }
+          }
+          // Try YYYY-MM-DD format
+          const date = new Date(dateStr + 'T00:00:00')
+          return isNaN(date.getTime()) ? 0 : date.getTime()
+        }
+        return parseDate(b.name) - parseDate(a.name) // Most recent first
+      })
+      
+      setExcelSheets(sortedSheets)
+      setSelectedSheet(sortedSheets[0].name)
       return true
     } catch (e) {
       console.log('No Excel JSON found or failed to load:', e)
