@@ -37,8 +37,16 @@ function App() {
       if (!json || !Array.isArray(json.sheets) || json.sheets.length === 0) {
         return false
       }
-      setExcelSheets(json.sheets)
-      setSelectedSheet(json.sheets[0].name)
+      // Filter out template sheets (e.g., "sheet3")
+      const filteredSheets = json.sheets.filter(sheet => {
+        const nameLower = sheet.name.toLowerCase()
+        return !nameLower.includes('sheet3') && !nameLower.includes('template')
+      })
+      if (filteredSheets.length === 0) {
+        return false
+      }
+      setExcelSheets(filteredSheets)
+      setSelectedSheet(filteredSheets[0].name)
       return true
     } catch (e) {
       console.log('No Excel JSON found or failed to load:', e)
@@ -174,10 +182,9 @@ function App() {
 
   return (
     <div className="app">
-      <header className="app-header">
-        <h1>🦌 Hunting Data Visualizer</h1>
-        <p>Visualize hunting data from Excel or OCR</p>
-      </header>
+          <header className="app-header">
+            <h1>🦆 LOGC Shoot Logs and Stats</h1>
+          </header>
 
       <div className="app-content">
         {/* If Excel data is present, show it as primary view */}
@@ -185,12 +192,12 @@ function App() {
           <>
             {/* View Mode Tabs */}
             <div className="view-tabs">
-              <button
-                className={`tab-button ${viewMode === 'table' ? 'active' : ''}`}
-                onClick={() => setViewMode('table')}
-              >
-                📋 Tables
-              </button>
+                <button
+                  className={`tab-button ${viewMode === 'table' ? 'active' : ''}`}
+                  onClick={() => setViewMode('table')}
+                >
+                  📋 Shoot Logs
+                </button>
               <button
                 className={`tab-button ${viewMode === 'analytics' ? 'active' : ''}`}
                 onClick={() => setViewMode('analytics')}
@@ -202,17 +209,55 @@ function App() {
             {viewMode === 'table' ? (
               <>
                 <div className="date-select-row">
-                  <label htmlFor="sheet-select">Select table:</label>
+                  <label htmlFor="sheet-select">Select shoot date:</label>
                   <select
                     id="sheet-select"
                     value={selectedSheet}
                     onChange={(e) => setSelectedSheet(e.target.value)}
                   >
-                    {excelSheets.map((sheet) => (
-                      <option key={sheet.name} value={sheet.name}>
-                        {sheet.name}
-                      </option>
-                    ))}
+                    {excelSheets.map((sheet) => {
+                      // Format date as "Sunday, November 16, 2025"
+                      const formatDateWithDay = (dateStr) => {
+                        try {
+                          let date
+                          
+                          // Try parsing MM_DD_YY format (e.g., "11_19_25")
+                          if (dateStr.includes('_')) {
+                            const parts = dateStr.split('_')
+                            if (parts.length === 3) {
+                              const month = parseInt(parts[0], 10) - 1 // Month is 0-indexed
+                              const day = parseInt(parts[1], 10)
+                              let year = parseInt(parts[2], 10)
+                              // Handle 2-digit year (assume 2000s)
+                              if (year < 100) {
+                                year += 2000
+                              }
+                              date = new Date(year, month, day)
+                            } else {
+                              return dateStr
+                            }
+                          } else {
+                            // Try parsing as YYYY-MM-DD format
+                            date = new Date(dateStr + 'T00:00:00')
+                          }
+                          
+                          if (isNaN(date.getTime())) {
+                            // If not a valid date, return as-is
+                            return dateStr
+                          }
+                          
+                          const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' }
+                          return date.toLocaleDateString('en-US', options)
+                        } catch (e) {
+                          return dateStr
+                        }
+                      }
+                      return (
+                        <option key={sheet.name} value={sheet.name}>
+                          {formatDateWithDay(sheet.name)}
+                        </option>
+                      )
+                    })}
                   </select>
                 </div>
 
@@ -221,8 +266,11 @@ function App() {
                   if (!currentSheet) return null
                   
                   // Filter out columns that will be displayed in TableSummary
+                  // Always include Geese column even if empty
                   const displayHeaders = currentSheet.headers.filter(h => {
                     const lower = h.toLowerCase()
+                    // Always include Geese
+                    if (lower.includes('geese')) return true
                     // Exclude total columns
                     if (lower.includes('total')) return false
                     // Exclude weather/condition/temp/wind columns
@@ -242,6 +290,16 @@ function App() {
                     return true
                   })
                   
+                  // Ensure Geese is included even if not in headers
+                  const hasGeese = displayHeaders.some(h => h.toLowerCase().includes('geese'))
+                  if (!hasGeese) {
+                    // Find Geese in original headers and add it
+                    const geeseHeader = currentSheet.headers.find(h => h.toLowerCase().includes('geese'))
+                    if (geeseHeader) {
+                      displayHeaders.push(geeseHeader)
+                    }
+                  }
+                  
                   return (
                     <>
                       <TableSummary sheet={currentSheet} />
@@ -258,9 +316,11 @@ function App() {
                             <tbody>
                               {currentSheet.rows.map((row, idx) => (
                                 <tr key={idx}>
-                                  {displayHeaders.map((h) => (
-                                    <td key={h}>{row[h] || ''}</td>
-                                  ))}
+                                  {displayHeaders.map((h) => {
+                                    const value = row[h]
+                                    // Show "-" for empty cells (including Geese)
+                                    return <td key={h}>{value || '-'}</td>
+                                  })}
                                 </tr>
                               ))}
                             </tbody>

@@ -9,11 +9,12 @@ function TableSummary({ sheet }) {
   const rows = sheet.rows || []
   
   // Identify columns to extract (totals, weather, and mixed data columns)
-  // Exclude Hunter Total from totals display
+  // Exclude Hunter Total and Day Total from totals display (Day Total is sum of member totals)
   const totalColumns = headers.filter(h => {
     const lower = h.toLowerCase()
-    return (lower.includes('total') || lower.includes('day total')) &&
-           !lower.includes('hunter total')
+    return lower.includes('total') &&
+           !lower.includes('hunter total') &&
+           !lower.includes('day total')
   })
   
   // Find columns that contain weather/mixed data (not actual dates or member data)
@@ -125,6 +126,8 @@ function TableSummary({ sheet }) {
   // Calculate totals
   const calculateTotals = () => {
     const totals = {}
+    
+    // Calculate totals from total columns
     totalColumns.forEach(col => {
       let sum = 0
       rows.forEach(row => {
@@ -135,6 +138,63 @@ function TableSummary({ sheet }) {
       })
       totals[col] = sum
     })
+    
+    // Helper to calculate sum from a species column
+    const calculateSpeciesTotal = (speciesName) => {
+      // First try to find a "Total [Species]" column
+      const totalCol = headers.find(h => {
+        const lower = h.toLowerCase()
+        return lower.includes('total') && lower.includes(speciesName.toLowerCase())
+      })
+      
+      if (totalCol && totals[totalCol] !== undefined) {
+        return totals[totalCol]
+      }
+      
+      // If not found, calculate from the species column itself
+      const speciesCol = headers.find(h => {
+        const lower = h.toLowerCase()
+        return lower.includes(speciesName.toLowerCase()) && !lower.includes('total')
+      })
+      
+      if (speciesCol) {
+        let sum = 0
+        rows.forEach(row => {
+          const value = parseFloat(row[speciesCol]) || 0
+          if (!isNaN(value)) {
+            sum += value
+          }
+        })
+        return sum
+      }
+      
+      return 0
+    }
+    
+    // Always ensure Ducks, Mallards, and Geese are included
+    // Use consistent naming to avoid duplicates
+    const requiredSpecies = [
+      { key: 'Total Ducks', name: 'ducks' },
+      { key: 'Total Mallards', name: 'mallard' },
+      { key: 'Total Geese', name: 'geese' }
+    ]
+    
+    requiredSpecies.forEach(({ key, name }) => {
+      // Check if we already have this total (might be named differently)
+      const existingKey = Object.keys(totals).find(k => 
+        k.toLowerCase().includes(name.toLowerCase()) && k.toLowerCase().includes('total')
+      )
+      
+      if (!existingKey) {
+        // Calculate from species column
+        totals[key] = calculateSpeciesTotal(name)
+      } else if (existingKey !== key) {
+        // Rename to consistent key to avoid duplicates
+        totals[key] = totals[existingKey]
+        delete totals[existingKey]
+      }
+    })
+    
     return totals
   }
 
@@ -170,6 +230,8 @@ function TableSummary({ sheet }) {
   // Totals: numeric values that are totals (like Total Ducks, Total Mallards, etc.)
   const weatherInfo = {}
   const totalsFromExtracted = {}
+  let highTemp = null
+  let lowTemp = null
   
   Object.entries(extractedInfo).forEach(([label, data]) => {
     const isGrouped = typeof data === 'object' && !Array.isArray(data)
@@ -182,48 +244,60 @@ function TableSummary({ sheet }) {
         
         if (isTotalLabel) {
           // This is a total - sum the values
-          const sum = values.reduce((acc, v) => acc + (parseFloat(v) || 0), 0)
-          if (sum > 0) {
-            totalsFromExtracted[groupLabel] = sum
+          // Exclude Day Total (it's sum of member totals)
+          if (!groupLower.includes('day total')) {
+            const sum = values.reduce((acc, v) => acc + (parseFloat(v) || 0), 0)
+            // Always include required species totals even if 0
+            const isRequiredSpecies = groupLower.includes('ducks') || 
+                                     groupLower.includes('mallard') || 
+                                     groupLower.includes('geese')
+            if (sum > 0 || isRequiredSpecies) {
+              totalsFromExtracted[groupLabel] = sum
+            }
           }
         } else {
-          // Check if this is a weather-related label
-          const isWeatherLabel = groupLower.includes('high') || 
-                                 groupLower.includes('low') || 
-                                 groupLower.includes('wind') || 
-                                 groupLower.includes('condition') ||
-                                 groupLower.includes('temp') ||
-                                 groupLower.includes('rain') ||
-                                 groupLower.includes('cloud')
-          
-          // Check if values are weather-related (not just numbers)
-          const hasWeatherValues = values.some(v => {
-            const vStr = v.toString().toLowerCase()
-            return isWeatherValue(v) || vStr.includes('mph') || vStr.includes('rain') || 
-                   vStr.includes('sse') || vStr.includes('nw') || vStr.includes('ne') ||
-                   vStr.includes('sw') || vStr.includes('clear') || vStr.includes('cloud')
-          })
-          
-          if (isWeatherLabel || hasWeatherValues) {
-            // This is weather info
-            if (!weatherInfo[label]) weatherInfo[label] = {}
-            weatherInfo[label][groupLabel] = values
+          // Check if this is High or Low temperature
+          if (groupLower.includes('high') && !groupLower.includes('wind')) {
+            highTemp = values.find(v => isTemperature(v)) || values[0]
+          } else if (groupLower.includes('low') && !groupLower.includes('wind')) {
+            lowTemp = values.find(v => isTemperature(v)) || values[0]
           } else {
-            // Check if all values are numeric - might be totals
-            const allNumeric = values.every(v => {
-              const num = parseFloat(v)
-              return !isNaN(num) && num > 0
+            // Check if this is a weather-related label (but not High/Low temp)
+            const isWeatherLabel = groupLower.includes('wind') || 
+                                   groupLower.includes('condition') ||
+                                   groupLower.includes('temp') ||
+                                   groupLower.includes('rain') ||
+                                   groupLower.includes('cloud')
+            
+            // Check if values are weather-related (not just numbers)
+            const hasWeatherValues = values.some(v => {
+              const vStr = v.toString().toLowerCase()
+              return isWeatherValue(v) || vStr.includes('mph') || vStr.includes('rain') || 
+                     vStr.includes('sse') || vStr.includes('nw') || vStr.includes('ne') ||
+                     vStr.includes('sw') || vStr.includes('clear') || vStr.includes('cloud')
             })
-            if (allNumeric && values.length > 0) {
-              // These are totals (like species counts)
-              const sum = values.reduce((acc, v) => acc + (parseFloat(v) || 0), 0)
-              if (sum > 0) {
-                totalsFromExtracted[groupLabel] = sum
-              }
-            } else {
-              // Default to weather if unsure
+            
+            if (isWeatherLabel || hasWeatherValues) {
+              // This is weather info (but not High/Low temp)
               if (!weatherInfo[label]) weatherInfo[label] = {}
               weatherInfo[label][groupLabel] = values
+            } else {
+              // Check if all values are numeric - might be totals
+              const allNumeric = values.every(v => {
+                const num = parseFloat(v)
+                return !isNaN(num) && num > 0
+              })
+              if (allNumeric && values.length > 0) {
+                // These are totals (like species counts)
+                const sum = values.reduce((acc, v) => acc + (parseFloat(v) || 0), 0)
+                if (sum > 0) {
+                  totalsFromExtracted[groupLabel] = sum
+                }
+              } else {
+                // Default to weather if unsure
+                if (!weatherInfo[label]) weatherInfo[label] = {}
+                weatherInfo[label][groupLabel] = values
+              }
             }
           }
         }
@@ -231,47 +305,108 @@ function TableSummary({ sheet }) {
     }
   })
   
+  // Combine High and Low into a single Temperature field
+  if (highTemp || lowTemp) {
+    const tempValue = highTemp && lowTemp 
+      ? `${highTemp}° / ${lowTemp}°`
+      : highTemp 
+        ? `${highTemp}°`
+        : lowTemp 
+          ? `${lowTemp}°`
+          : null
+    
+    if (tempValue) {
+      const dateValueCol = headers.find(h => h.match(/^\d{4}-\d{2}-\d{2}/))
+      if (dateValueCol) {
+        if (!weatherInfo[dateValueCol]) weatherInfo[dateValueCol] = {}
+        weatherInfo[dateValueCol]['Temperature'] = [tempValue]
+      }
+    }
+  }
+  
   // Merge totals from extracted info with calculated totals
+  // Ensure Ducks, Mallards, and Geese are always included
   const allTotals = { ...totals, ...totalsFromExtracted }
+  
+  // Helper to calculate sum from a species column
+  const calculateSpeciesTotal = (speciesName) => {
+    // First try to find a "Total [Species]" column in headers
+    const totalCol = headers.find(h => {
+      const lower = h.toLowerCase()
+      return lower.includes('total') && lower.includes(speciesName.toLowerCase())
+    })
+    
+    if (totalCol && allTotals[totalCol] !== undefined) {
+      return allTotals[totalCol]
+    }
+    
+    // If not found, calculate from the species column itself
+    const speciesCol = headers.find(h => {
+      const lower = h.toLowerCase()
+      return lower.includes(speciesName.toLowerCase()) && !lower.includes('total')
+    })
+    
+    if (speciesCol) {
+      let sum = 0
+      rows.forEach(row => {
+        const value = parseFloat(row[speciesCol]) || 0
+        if (!isNaN(value)) {
+          sum += value
+        }
+      })
+      return sum
+    }
+    
+    return 0
+  }
+  
+  // Always ensure Ducks, Mallards, and Geese are included (even if 0)
+  const requiredSpecies = [
+    { key: 'Total Ducks', name: 'ducks' },
+    { key: 'Total Mallards', name: 'mallard' },
+    { key: 'Total Geese', name: 'geese' }
+  ]
+  
+  requiredSpecies.forEach(({ key, name }) => {
+    // Check if we already have this total (might be named differently)
+    const existingKey = Object.keys(allTotals).find(k => {
+      const kLower = k.toLowerCase()
+      return kLower.includes(name.toLowerCase()) && (kLower.includes('total') || kLower === name.toLowerCase())
+    })
+    
+    if (!existingKey) {
+      // Calculate from species column
+      allTotals[key] = calculateSpeciesTotal(name)
+    } else if (existingKey !== key) {
+      // Rename to consistent key to avoid duplicates
+      allTotals[key] = allTotals[existingKey]
+      // Only delete if it's a different key (to avoid showing duplicate)
+      if (!existingKey.toLowerCase().includes(key.toLowerCase().replace('total ', ''))) {
+        delete allTotals[existingKey]
+      }
+    }
+  })
 
   return (
     <div className="table-summary">
       {Object.keys(weatherInfo).length > 0 && (
         <div className="summary-section weather-section">
           <h3>🌤️ Weather & Conditions</h3>
-          {Object.entries(weatherInfo).map(([label, data]) => (
-            <div key={label} className="weather-container">
-              {Object.entries(data).map(([groupLabel, values]) => (
-                <div key={groupLabel} className="weather-card">
-                  <div className="weather-card-header">
-                    <span className="weather-card-icon">
-                      {groupLabel.toLowerCase().includes('wind') ? '💨' :
-                       groupLabel.toLowerCase().includes('condition') || groupLabel.toLowerCase().includes('rain') ? '🌧️' :
-                       groupLabel.toLowerCase().includes('high') || groupLabel.toLowerCase().includes('low') ? '🌡️' :
-                       '🌤️'}
-                    </span>
-                    <span className="weather-card-title">{groupLabel}</span>
-                  </div>
-                  <div className="weather-card-content">
-                    {values.map((value, idx) => {
-                      const isWeather = isWeatherValue(value)
-                      const isTemp = isTemperature(value)
-                      return (
-                        <div 
-                          key={idx} 
-                          className={`weather-badge ${isWeather ? 'weather-type' : ''} ${isTemp ? 'temp-type' : ''}`}
-                        >
-                          {isWeather && <span className="badge-icon">🌤️</span>}
-                          {isTemp && <span className="badge-icon">🌡️</span>}
-                          <span className="badge-text">{value}</span>
-                        </div>
-                      )
-                    })}
-                  </div>
-                </div>
-              ))}
-            </div>
-          ))}
+          <div className="weather-simple">
+            {Object.entries(weatherInfo).map(([label, data]) => (
+              <div key={label}>
+                {Object.entries(data).map(([groupLabel, values]) => {
+                  const displayValue = values.join(' ')
+                  return (
+                    <div key={groupLabel} className="weather-line">
+                      <span className="weather-label">{groupLabel}:</span>
+                      <span className="weather-value">{displayValue}</span>
+                    </div>
+                  )
+                })}
+              </div>
+            ))}
+          </div>
         </div>
       )}
 
