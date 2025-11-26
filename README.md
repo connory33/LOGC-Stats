@@ -62,7 +62,19 @@ npm run dev
 
 ## Deployment
 
-The app is automatically deployed to GitHub Pages via GitHub Actions when changes are pushed to the `main` branch.
+The app is automatically deployed to GitHub Pages via GitHub Actions when changes are pushed to the `main` branch. The deployment uses the `gh-pages` branch method, which is more reliable than artifact-based deployment.
+
+**To deploy manually:**
+```bash
+cd react-app
+npm run deploy
+```
+
+**GitHub Pages Settings:**
+- Go to Settings → Pages
+- Set Source to: **Deploy from a branch**
+- Branch: `gh-pages`
+- Folder: `/ (root)`
 
 ## Project Structure
 
