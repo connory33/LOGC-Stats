@@ -1,0 +1,131 @@
+.app {
+  max-width: 1400px;
+  margin: 0 auto;
+}
+
+.app-header {
+  text-align: center;
+  color: white;
+  margin-bottom: 30px;
+  padding: 20px;
+  background: linear-gradient(135deg, #2c2416 0%, #1a1610 100%);
+  border-radius: 8px;
+}
+
+.app-header h1 {
+  font-size: 2.5rem;
+  margin-bottom: 10px;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+.app-header p {
+  font-size: 1.1rem;
+  opacity: 0.9;
+}
+
+.app-content {
+  background: #f5f1e8;
+  border-radius: 12px;
+  padding: 30px;
+  box-shadow: 0 10px 40px rgba(44, 36, 22, 0.2);
+  border: 1px solid #d4c5a9;
+}
+
+.error-message {
+  background: #fee;
+  color: #c33;
+  padding: 15px;
+  border-radius: 8px;
+  margin: 20px 0;
+  border-left: 4px solid #c33;
+}
+
+.loading {
+  text-align: center;
+  padding: 40px;
+}
+
+.spinner {
+  border: 4px solid #d4c5a9;
+  border-top: 4px solid #5a7c4a;
+  border-radius: 50%;
+  width: 50px;
+  height: 50px;
+  animation: spin 1s linear infinite;
+  margin: 0 auto 20px;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+.empty-state {
+  text-align: center;
+  padding: 60px 20px;
+  color: #5a5a4a;
+}
+
+.empty-state p {
+  margin: 10px 0;
+  font-size: 1.1rem;
+}
+
+.empty-state code {
+  background: #f5f5f5;
+  padding: 2px 8px;
+  border-radius: 4px;
+  font-size: 0.9rem;
+}
+
+.images-container {
+  width: 100%;
+}
+
+.images-header {
+  margin-bottom: 25px;
+  padding-bottom: 15px;
+  border-bottom: 2px solid #d4c5a9;
+}
+
+.images-header h2 {
+  margin: 0 0 8px 0;
+  color: #2c2416;
+  font-size: 1.5rem;
+}
+
+.images-count {
+  margin: 0;
+  color: #5a5a4a;
+  font-size: 1rem;
+}
+
+.view-tabs {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 25px;
+  border-bottom: 2px solid #d4c5a9;
+}
+
+.tab-button {
+  background: none;
+  border: none;
+  padding: 12px 24px;
+  font-size: 1rem;
+  font-weight: 600;
+  color: #5a5a4a;
+  cursor: pointer;
+  border-bottom: 3px solid transparent;
+  transition: all 0.2s;
+}
+
+.tab-button:hover {
+  color: #5a7c4a;
+  background: #e8e0d0;
+}
+
+.tab-button.active {
+  color: #5a7c4a;
+  border-bottom-color: #5a7c4a;
+}
+

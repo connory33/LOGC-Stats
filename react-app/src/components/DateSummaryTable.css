@@ -1,0 +1,58 @@
+.date-table-container {
+  width: 100%;
+}
+
+.date-table-header {
+  margin-bottom: 15px;
+}
+
+.date-table-header h2 {
+  margin: 0;
+  color: #2c2416;
+}
+
+.fixed-layout.data-table {
+  width: 100%;
+  border-collapse: collapse;
+  background: #faf8f3;
+}
+
+.fixed-layout.data-table thead {
+  background: linear-gradient(135deg, #5a7c4a 0%, #3d5a2f 100%);
+  color: white;
+}
+
+.fixed-layout.data-table th,
+.fixed-layout.data-table td {
+  padding: 10px 12px;
+  border-bottom: 1px solid #d4c5a9;
+  font-size: 0.9rem;
+  text-align: center;
+}
+
+.fixed-layout.data-table th:first-child,
+.fixed-layout.data-table td:first-child {
+  text-align: left;
+  font-weight: 600;
+}
+
+.date-select-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 20px;
+}
+
+.date-select-row label {
+  font-weight: 500;
+  color: #2c2416;
+}
+
+.date-select-row select {
+  padding: 6px 10px;
+  border-radius: 6px;
+  border: 1px solid #d4c5a9;
+  font-size: 0.95rem;
+}
+
+
