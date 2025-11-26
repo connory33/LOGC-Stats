@@ -49,10 +49,11 @@ function App() {
   const loadDefaultCSV = async () => {
     // Try multiple possible locations for the CSV file.
     // Prefer the GPT-based results if present.
+    const baseUrl = import.meta.env.BASE_URL || '/'
     const csvPaths = [
-      '/ocr_results_gpt.csv',      // GPT vision results (public)
-      '/ocr_results.csv',          // OCR.space / Tesseract results (public)
-      '../output/ocr_results.csv'  // Parent output directory
+      `${baseUrl}ocr_results_gpt.csv`,      // GPT vision results (public)
+      `${baseUrl}ocr_results.csv`,          // OCR.space / Tesseract results (public)
+      `${baseUrl}../output/ocr_results.csv`  // Parent output directory
     ]
     
     for (const path of csvPaths) {
