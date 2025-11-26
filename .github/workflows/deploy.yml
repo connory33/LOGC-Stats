@@ -47,6 +47,22 @@ jobs:
           cp react-app/public/404.html react-app/dist/404.html
           ls -la react-app/dist/ | grep 404
 
+      - name: Verify artifact contents
+        run: |
+          echo "=== Verifying artifact structure ==="
+          echo "Current directory:"
+          pwd
+          echo ""
+          echo "Files in react-app/dist:"
+          ls -la react-app/dist/
+          echo ""
+          echo "Checking for critical files:"
+          test -f react-app/dist/index.html && echo "✓ index.html exists" || (echo "✗ index.html NOT FOUND" && exit 1)
+          test -f react-app/dist/404.html && echo "✓ 404.html exists" || echo "⚠ 404.html NOT FOUND"
+          echo ""
+          echo "Directory tree (first level):"
+          find react-app/dist -maxdepth 1 -type f -o -type d | sort
+
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:

@@ -28,6 +28,7 @@ function AnalyticsDashboard({ sheets }) {
     const guideStats = {}
     const memberBlindStats = {}
     const memberSpeciesStats = {}
+    let totalMallardsCount = 0
 
     // Process each sheet
     sheets.forEach(sheet => {
@@ -102,6 +103,11 @@ function AnalyticsDashboard({ sheets }) {
             totalKills += value
           }
         })
+        
+        // Calculate total mallards for this record (Drake + Hen)
+        const drakeMallard = parseFloat(row['Drake Mallard'] || row[headers.find(h => h.toLowerCase().includes('drake') && h.toLowerCase().includes('mallard'))] || 0) || 0
+        const henMallard = parseFloat(row['Hen Mallard'] || row[headers.find(h => h.toLowerCase().includes('hen') && h.toLowerCase().includes('mallard'))] || 0) || 0
+        const recordMallards = drakeMallard + henMallard
 
         if (totalKills === 0 && guns === 0) return // Skip empty rows
 
@@ -113,10 +119,12 @@ function AnalyticsDashboard({ sheets }) {
           guns,
           condition,
           totalKills,
-          speciesKills
+          speciesKills,
+          totalMallards: recordMallards
         }
 
         allRecords.push(record)
+        totalMallardsCount += recordMallards
 
         // Aggregate stats
         if (member) {
@@ -243,6 +251,7 @@ function AnalyticsDashboard({ sheets }) {
         stats: {
           totalHunts,
           totalKills,
+          totalMallards: totalMallardsCount,
           avgKillsPerMember,
           totalKillsPerHunt,
           uniqueBlinds: Object.keys(blindStats).length
@@ -280,8 +289,10 @@ function AnalyticsDashboard({ sheets }) {
     const memberBlindStats = {}
     const memberSpeciesStats = {}
 
+    let filteredTotalMallards = 0
     filteredRecords.forEach(record => {
-      const { member, guide, blind, condition, totalKills, speciesKills, date } = record
+      const { member, guide, blind, condition, totalKills, speciesKills, date, totalMallards = 0 } = record
+      filteredTotalMallards += totalMallards
 
       if (member) {
         memberStats[member] = (memberStats[member] || 0) + totalKills
@@ -376,6 +387,7 @@ function AnalyticsDashboard({ sheets }) {
       stats: {
         totalHunts,
         totalKills,
+        totalMallards: filteredTotalMallards,
         avgKillsPerMember,
         totalKillsPerHunt,
         uniqueBlinds: Object.keys(blindStats).length
@@ -436,6 +448,10 @@ function AnalyticsDashboard({ sheets }) {
         <div className="stat-card">
           <div className="stat-value">{stats.totalKills}</div>
           <div className="stat-label">Total Kills</div>
+        </div>
+        <div className="stat-card">
+          <div className="stat-value">{stats.totalMallards || 0}</div>
+          <div className="stat-label">Total Mallards</div>
         </div>
         <div className="stat-card">
           <div className="stat-value">{stats.uniqueBlinds}</div>
