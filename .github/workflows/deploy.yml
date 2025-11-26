@@ -69,11 +69,19 @@ jobs:
           echo "=== Checking if index.html has correct paths ==="
           grep -E "(src=|href=)" react-app/dist/index.html | head -3
 
+      - name: List files to be uploaded
+        run: |
+          echo "=== Files that will be uploaded ==="
+          cd react-app/dist
+          find . -type f | head -20
+          echo ""
+          echo "=== Checking index.html is at root ==="
+          test -f ./index.html && echo "✓ index.html is at root of dist/" || echo "✗ index.html NOT at root"
+          
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
           path: './react-app/dist'
-          retention-days: 1
 
   deploy:
     environment:
