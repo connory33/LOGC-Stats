@@ -6,6 +6,8 @@ on:
       - main
   workflow_dispatch:
 
+# Deploy to GitHub Pages
+
 permissions:
   contents: read
   pages: write
