@@ -62,11 +62,18 @@ jobs:
           echo ""
           echo "Directory tree (first level):"
           find react-app/dist -maxdepth 1 -type f -o -type d | sort
+          echo ""
+          echo "=== Verifying index.html content ==="
+          head -5 react-app/dist/index.html
+          echo ""
+          echo "=== Checking if index.html has correct paths ==="
+          grep -E "(src=|href=)" react-app/dist/index.html | head -3
 
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
           path: './react-app/dist'
+          retention-days: 1
 
   deploy:
     environment:
