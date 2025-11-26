@@ -42,8 +42,10 @@ jobs:
       - name: Setup Pages
         uses: actions/configure-pages@v4
 
-      - name: Copy 404.html
-        run: cp react-app/public/404.html react-app/dist/404.html
+      - name: Copy 404.html to dist
+        run: |
+          cp react-app/public/404.html react-app/dist/404.html
+          ls -la react-app/dist/ | grep 404
 
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
