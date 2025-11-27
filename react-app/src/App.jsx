@@ -4,6 +4,7 @@ import ImageTable from './components/ImageTable'
 import FileUpload from './components/FileUpload'
 import DateSummaryTable from './components/DateSummaryTable'
 import AnalyticsDashboard from './components/AnalyticsDashboard'
+import IndividualMemberStats from './components/IndividualMemberStats'
 import TableSummary from './components/TableSummary'
 import { parseOCRToTable } from './utils/parseOCRData'
 import './App.css'
@@ -16,7 +17,7 @@ function App() {
   const [selectedDate, setSelectedDate] = useState('')
   const [excelSheets, setExcelSheets] = useState([])
   const [selectedSheet, setSelectedSheet] = useState('')
-  const [viewMode, setViewMode] = useState('table') // 'table' or 'analytics'
+  const [viewMode, setViewMode] = useState('table') // 'table', 'club-wide', or 'individual'
 
   // On mount, prefer Excel-based visualization; fall back to CSV/OCR if not found.
   useEffect(() => {
@@ -222,12 +223,18 @@ function App() {
                 >
                   📋 Shoot Logs
                 </button>
-              <button
-                className={`tab-button ${viewMode === 'analytics' ? 'active' : ''}`}
-                onClick={() => setViewMode('analytics')}
-              >
-                📊 Analytics
-              </button>
+                <button
+                  className={`tab-button ${viewMode === 'club-wide' ? 'active' : ''}`}
+                  onClick={() => setViewMode('club-wide')}
+                >
+                  📊 Club-Wide Stats
+                </button>
+                <button
+                  className={`tab-button ${viewMode === 'individual' ? 'active' : ''}`}
+                  onClick={() => setViewMode('individual')}
+                >
+                  👤 Individual Member Stats
+                </button>
             </div>
 
             {viewMode === 'table' ? (
@@ -338,15 +345,43 @@ function App() {
                               </tr>
                             </thead>
                             <tbody>
-                              {currentSheet.rows.map((row, idx) => (
-                                <tr key={idx}>
-                                  {displayHeaders.map((h) => {
-                                    const value = row[h]
-                                    // Show "-" for empty cells (including Geese)
-                                    return <td key={h}>{value || '-'}</td>
-                                  })}
-                                </tr>
-                              ))}
+                              {(() => {
+                                // Separate Day Total row from regular rows
+                                const memberHeader = displayHeaders.find(h => h.toLowerCase().includes('member')) || displayHeaders[0]
+                                const regularRows = []
+                                const dayTotalRow = []
+                                
+                                currentSheet.rows.forEach((row, idx) => {
+                                  const memberValue = (row[memberHeader] || '').toString().trim().toLowerCase()
+                                  if (memberValue.includes('day total')) {
+                                    dayTotalRow.push({ row, idx })
+                                  } else {
+                                    regularRows.push({ row, idx })
+                                  }
+                                })
+                                
+                                // Combine: regular rows first, then Day Total at the bottom
+                                const allRows = [...regularRows, ...dayTotalRow]
+                                
+                                return allRows.map(({ row, idx }) => {
+                                  const memberValue = (row[memberHeader] || '').toString().trim().toLowerCase()
+                                  const isDayTotal = memberValue.includes('day total')
+                                  
+                                  return (
+                                    <tr key={idx} className={isDayTotal ? 'day-total-row' : ''}>
+                                      {displayHeaders.map((h) => {
+                                        const value = row[h]
+                                        // Show "-" for empty cells (including Geese)
+                                        return (
+                                          <td key={h} style={isDayTotal ? { fontWeight: 'bold' } : {}}>
+                                            {value || '-'}
+                                          </td>
+                                        )
+                                      })}
+                                    </tr>
+                                  )
+                                })
+                              })()}
                             </tbody>
                           </table>
                         </div>
@@ -355,8 +390,10 @@ function App() {
                   )
                 })()}
               </>
-            ) : (
+            ) : viewMode === 'club-wide' ? (
               <AnalyticsDashboard sheets={excelSheets} />
+            ) : (
+              <IndividualMemberStats sheets={excelSheets} />
             )}
           </>
         ) : (

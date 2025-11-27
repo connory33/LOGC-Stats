@@ -133,3 +133,12 @@
   border-bottom-color: #5a7c4a;
 }
 
+.day-total-row {
+  font-weight: bold;
+  background-color: #f0ebe0;
+}
+
+.day-total-row td {
+  font-weight: bold;
+}
+

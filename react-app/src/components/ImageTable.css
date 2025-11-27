@@ -71,7 +71,7 @@
 }
 
 .data-table thead {
-  background: #f8f9fa;
+  background: linear-gradient(135deg, #5a7c4a 0%, #3d5a2f 100%);
 }
 
 .data-table th {
@@ -79,8 +79,8 @@
   text-align: left;
   font-weight: 600;
   font-size: 0.95rem;
-  color: #333;
-  border-bottom: 2px solid #667eea;
+  color: white !important;
+  border-bottom: 2px solid #4a6b3a;
 }
 
 .data-table tbody tr {

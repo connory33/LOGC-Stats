@@ -13,6 +13,7 @@
 .analytics-filters {
   display: flex;
   align-items: center;
+  justify-content: space-between;
   gap: 15px;
   margin-bottom: 30px;
   padding: 20px;
@@ -64,39 +65,98 @@
   font-weight: 600;
 }
 
-.stats-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-  gap: 20px;
+.stats-container {
   margin-bottom: 40px;
 }
 
-.stat-card {
-  background: linear-gradient(135deg, #5a7c4a 0%, #3d5a2f 100%);
-  color: white;
-  padding: 25px;
+.stats-main {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+}
+
+.stats-section {
+  background: #faf8f3;
+  padding: 20px;
   border-radius: 12px;
+  border: 2px solid #d4c5a9;
+  box-shadow: 0 2px 8px rgba(44, 36, 22, 0.1);
+}
+
+.stats-section-title {
+  margin: 0 0 15px 0;
+  color: #2c2416;
+  font-size: 1.1rem;
+  font-weight: 600;
   text-align: center;
-  box-shadow: 0 4px 15px rgba(90, 124, 74, 0.3);
-  transition: transform 0.2s;
-  border: 1px solid #4a6b3a;
+  padding-bottom: 10px;
+  border-bottom: 2px solid #d4c5a9;
 }
 
-.stat-card:hover {
-  transform: translateY(-5px);
+.stats-table {
+  display: flex;
+  flex-direction: column;
 }
 
-.stat-value {
-  font-size: 2.5rem;
-  font-weight: bold;
-  margin-bottom: 8px;
+.stat-row {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  align-items: center;
+  padding: 10px 0;
+  border-bottom: 1px solid #e8e0d0;
+  gap: 20px;
+}
+
+.stat-row:last-child {
+  border-bottom: none;
+}
+
+.stat-row:hover {
+  background: #f5f1e8;
+  margin: 0 -5px;
+  padding: 10px 5px;
+  border-radius: 4px;
 }
 
 .stat-label {
+  font-size: 0.95rem;
+  color: #2c2416;
+  font-weight: 600;
+}
+
+.stat-value {
+  font-size: 1.3rem;
+  font-weight: 700;
+  color: #5a7c4a;
+  text-align: right;
+}
+
+.stats-hunts-display {
+  background: linear-gradient(135deg, #5a7c4a 0%, #3d5a2f 100%);
+  color: white;
+  border-radius: 12px;
+  padding: 12px 20px;
+  text-align: center;
+  box-shadow: 0 4px 15px rgba(90, 124, 74, 0.3);
+  border: 2px solid #4a6b3a;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-width: 120px;
+}
+
+.stats-hunts-label {
   font-size: 0.9rem;
-  opacity: 0.9;
+  opacity: 0.95;
   text-transform: uppercase;
-  letter-spacing: 1px;
+  letter-spacing: 0.5px;
+  font-weight: 500;
+}
+
+.stats-hunts-value {
+  font-size: 1.8rem;
+  font-weight: bold;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
 }
 
 .charts-grid {
@@ -151,9 +211,13 @@
 
 .performance-table th {
   padding: 12px;
-  text-align: left;
+  text-align: center;
   font-weight: 600;
   font-size: 0.9rem;
+}
+
+.performance-table th:first-child {
+  text-align: left;
 }
 
 .performance-table tbody tr {
@@ -169,6 +233,11 @@
   padding: 10px 12px;
   font-size: 0.9rem;
   color: #555;
+  text-align: center;
+}
+
+.performance-table td:first-child {
+  text-align: left;
 }
 
 .performance-table td strong {
